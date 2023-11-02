@@ -1,0 +1,3003 @@
+Product,Category,Summary,Text
+NewDevices,RAT,[Modbus][Huawei_SmartLogger] Association by API,"Precondition:
+1.GW 已經完成關聯User
+Test Steps:
+1. 使用 API 關聯 Modbus 裝置
+POST /api/v1/associations/devices 
+Expected results:
+1. 查看 DB，確認有成功關聯
+2. eg3 -> devices  TABLE 內的 UUID 有值 、且關聯日期有被填上
+ Note: 
+API body格式 請使用對應 modbus 種類 (TCP,RTU)"
+NewDevices,RAT,[Modbus][Huawei_SmartLogger] Dissociation by API,"Precondition:
+1.GW 已經關聯 {model} 裝置
+Test Steps:
+1. 使用 API 解除關聯 Modbus 裝置
+DELETE /api/v1/associations/devices/:deviceUuid
+Expected results:
+1. 查看 DB，確認有成功解除關聯
+2. eg3 -> devices  TABLE 內的 UUID 的值被移除、且關聯日期有被移除
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj1，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj1，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj1，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj1，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj1，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj1，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj1，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj1，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj1，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj1，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setActiveAdj1，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setActiveAdj1，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setActiveAdj1，有在 Required Control Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Control Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setActiveAdj1，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Control Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/control
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功 設定 此點位的資料
+3.預期在模擬裝置上，可以看到此點位數值被修改，且數值正確
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj2，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj2，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj2，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj2，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj2，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj2，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj2，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj2，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj2，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActiveAdj2，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setActiveAdj2，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setActiveAdj2，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setActiveAdj2，有在 Required Control Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Control Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setActiveAdj2，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Control Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/control
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功 設定 此點位的資料
+3.預期在模擬裝置上，可以看到此點位數值被修改，且數值正確
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj1，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj1，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj1，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj1，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj1，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj1，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj1，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj1，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj1，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj1，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setReactiveAdj1，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setReactiveAdj1，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setReactiveAdj1，有在 Required Control Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Control Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setReactiveAdj1，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Control Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/control
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功 設定 此點位的資料
+3.預期在模擬裝置上，可以看到此點位數值被修改，且數值正確
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj2，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj2，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj2，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj2，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj2，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj2，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj2，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj2，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj2，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getReactiveAdj2，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setReactiveAdj2，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setReactiveAdj2，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setReactiveAdj2，有在 Required Control Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Control Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setReactiveAdj2，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Control Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/control
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功 設定 此點位的資料
+3.預期在模擬裝置上，可以看到此點位數值被修改，且數值正確
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActivePowerAdjPercentage，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActivePowerAdjPercentage，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActivePowerAdjPercentage，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActivePowerAdjPercentage，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActivePowerAdjPercentage，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActivePowerAdjPercentage，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActivePowerAdjPercentage，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActivePowerAdjPercentage，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActivePowerAdjPercentage，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getActivePowerAdjPercentage，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setActivePowerAdjPercentage，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setActivePowerAdjPercentage，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setActivePowerAdjPercentage，有在 Required Control Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Control Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setActivePowerAdjPercentage，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Control Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/control
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功 設定 此點位的資料
+3.預期在模擬裝置上，可以看到此點位數值被修改，且數值正確
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getPowerFactorAdj，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getPowerFactorAdj，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getPowerFactorAdj，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getPowerFactorAdj，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getPowerFactorAdj，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getPowerFactorAdj，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getPowerFactorAdj，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getPowerFactorAdj，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getPowerFactorAdj，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 getPowerFactorAdj，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setPowerFactorAdj，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setPowerFactorAdj，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setPowerFactorAdj，有在 Required Control Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Control Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 setPowerFactorAdj，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Control Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/control
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功 設定 此點位的資料
+3.預期在模擬裝置上，可以看到此點位數值被修改，且數值正確
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxReactiveAdj，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxReactiveAdj，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxReactiveAdj，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxReactiveAdj，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxReactiveAdj，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxReactiveAdj，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxReactiveAdj，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxReactiveAdj，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxReactiveAdj，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxReactiveAdj，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minReactiveAdj，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minReactiveAdj，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minReactiveAdj，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minReactiveAdj，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minReactiveAdj，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minReactiveAdj，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minReactiveAdj，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minReactiveAdj，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minReactiveAdj，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minReactiveAdj，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxActiveAdj，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxActiveAdj，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxActiveAdj，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxActiveAdj，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxActiveAdj，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxActiveAdj，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxActiveAdj，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxActiveAdj，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxActiveAdj，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxActiveAdj，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minActiveAdj，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minActiveAdj，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minActiveAdj，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minActiveAdj，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minActiveAdj，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minActiveAdj，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minActiveAdj，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minActiveAdj，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minActiveAdj，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 minActiveAdj，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acChargeableElectricEnergy，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acChargeableElectricEnergy，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acChargeableElectricEnergy，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acChargeableElectricEnergy，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acChargeableElectricEnergy，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acChargeableElectricEnergy，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acChargeableElectricEnergy，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acChargeableElectricEnergy，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acChargeableElectricEnergy，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acChargeableElectricEnergy，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acDischargeableElectricEnergy，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acDischargeableElectricEnergy，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acDischargeableElectricEnergy，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acDischargeableElectricEnergy，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acDischargeableElectricEnergy，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acDischargeableElectricEnergy，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acDischargeableElectricEnergy，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acDischargeableElectricEnergy，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acDischargeableElectricEnergy，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acDischargeableElectricEnergy，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 ratedElectricEnergy，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 ratedElectricEnergy，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 ratedElectricEnergy，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 ratedElectricEnergy，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 ratedElectricEnergy，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 ratedElectricEnergy，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 ratedElectricEnergy，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 ratedElectricEnergy，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 ratedElectricEnergy，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 ratedElectricEnergy，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxChargingElectricEnergy，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxChargingElectricEnergy，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxChargingElectricEnergy，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxChargingElectricEnergy，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxChargingElectricEnergy，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxChargingElectricEnergy，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxChargingElectricEnergy，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxChargingElectricEnergy，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxChargingElectricEnergy，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxChargingElectricEnergy，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxDischargingElectricEnergy，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxDischargingElectricEnergy，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxDischargingElectricEnergy，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxDischargingElectricEnergy，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxDischargingElectricEnergy，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxDischargingElectricEnergy，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxDischargingElectricEnergy，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxDischargingElectricEnergy，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxDischargingElectricEnergy，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 maxDischargingElectricEnergy，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 storedElectricityPercent，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 storedElectricityPercent，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 storedElectricityPercent，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 storedElectricityPercent，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 storedElectricityPercent，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 storedElectricityPercent，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 storedElectricityPercent，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 storedElectricityPercent，點位資料上傳 interval 確認,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+2. 確認 點位資料 上傳頻率，有符合 1 分鐘 一筆 (根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 storedElectricityPercent，上傳到 Cassandra 的資料，符合一天總筆數沒有掉資料,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/counter
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+2. 確認 上傳到 Cassandra 的點位資料，符合一天總筆數，且沒有掉資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 storedElectricityPercent，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 storedElectricityPercent，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 instanceElectricity，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 instanceElectricity，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 instanceElectricity，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 instanceElectricity，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 instanceElectricity，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 instanceElectricity，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 instanceElectricity，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 instanceElectricity，點位資料上傳 interval 確認,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+2. 確認 點位資料 上傳頻率，有符合 1 分鐘 一筆 (根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 instanceElectricity，上傳到 Cassandra 的資料，符合一天總筆數沒有掉資料,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/counter
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+2. 確認 上傳到 Cassandra 的點位資料，符合一天總筆數，且沒有掉資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 instanceElectricity，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 instanceElectricity，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 powerFactor，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 powerFactor，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 powerFactor，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 powerFactor，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 powerFactor，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 powerFactor，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 powerFactor，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 powerFactor，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 powerFactor，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 powerFactor，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricity，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricity，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricity，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricity，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricity，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricity，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricity，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricity，點位資料上傳 interval 確認,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+2. 確認 點位資料 上傳頻率，有符合 1 分鐘 一筆 (根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricity，上傳到 Cassandra 的資料，符合一天總筆數沒有掉資料,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/counter
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+2. 確認 上傳到 Cassandra 的點位資料，符合一天總筆數，且沒有掉資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricity，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricity，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricityToday，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricityToday，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricityToday，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricityToday，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricityToday，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricityToday，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricityToday，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricityToday，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricityToday，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 generatedElectricityToday，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseR，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseR，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseR，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseR，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseR，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseR，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseR，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseR，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseR，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseR，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseS，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseS，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseS，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseS，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseS，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseS，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseS，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseS，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseS，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseS，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseT，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseT，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseT，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseT，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseT，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseT，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseT，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseT，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseT，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 acCurrentOfPhaseT，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 activePowerControlMode，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 activePowerControlMode，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 activePowerControlMode，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 activePowerControlMode，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 activePowerControlMode，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 activePowerControlMode，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 activePowerControlMode，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 activePowerControlMode，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 activePowerControlMode，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 activePowerControlMode，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 targetValueOfActivePowerAdjustment，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 targetValueOfActivePowerAdjustment，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 targetValueOfActivePowerAdjustment，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 targetValueOfActivePowerAdjustment，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 targetValueOfActivePowerAdjustment，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 targetValueOfActivePowerAdjustment，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 targetValueOfActivePowerAdjustment，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 targetValueOfActivePowerAdjustment，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 targetValueOfActivePowerAdjustment，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 targetValueOfActivePowerAdjustment，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 connectionStatus，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 connectionStatus，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 connectionStatus，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 connectionStatus，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 connectionStatus，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 connectionStatus，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 connectionStatus，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 connectionStatus，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 connectionStatus，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 connectionStatus，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm1，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm1，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm1，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm1，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm1，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm1，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm1，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm1，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm1，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm1，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm2，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm2，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm2，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm2，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm2，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm2，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm2，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm2，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm2，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm2，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm3，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm3，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm3，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm3，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm3，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm3，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm3，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm3，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm3，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm3，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm4，有在 device_profile 內,"Pre-condition 
+ 1. GW 已經關聯 {model} 裝置
+Steps:
+1. 開啟 device_profile.json 檔案
+ Expected Results:
+1. 預期 device_profile.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm4，有在 device_data_scope 內,"Pre-condition 
+1. GW 已經關聯 {model} 裝置
+Test Steps:
+1. 開啟 eg3 -> device_data_scope TABLE
+2. 檢查點位資訊，是否有在 DB 內
+Expected Results:
+1. 確認 DB eg3 -> device_data_scope  內，有這個 Modbus 點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm4，有在 config.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/cfg_mgmt/config.json 檔案
+Expected Results:
+1. 預期 config.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm4，有在 rules.json 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 開啟 /data/rules.json 檔案
+Expected Results:
+1. 預期 rules.json 檔案內會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm4，有在 Local DB 的 data_types TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data_types TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data_types where data_uuid='<DATA UUID>';'
+<DATA UUID> 要換成點位的 Data UUID
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm4，有在 Local DB 的 data TABLE 內,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger裝置
+Steps:
+1. 透過 adb 連入 ATTO
+2. 下 SQL 指令查詢 Local DB 的 data TABLE
+# sqlite3 -csv /data/rdg/v1/rdg.db 'SELECT * FROM data where data_id=<DATA ID> limit 10 ;'
+<DATA ID> 要換成點位的 Data ID (Local DB data_types 的 index
+Expected Results:
+1. 預期 DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm4，有上傳到 Cassandra/dps/datapoints,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 開啟 Cassandra DB，Cassandra/dps/datapoins
+2. 檢查點位資訊
+Expected Results:
+1. 確認 Cassandra DB 查詢結果，會有這個點位資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm4，有上傳到 IoEP device_data,"Pre-condition 
+1. GW 已經關聯 Huawei_SmartLogger 裝置
+Test Steps:
+1. 檢查點位資訊，是否有確實上傳到 IoEP
+Expected Results:
+1. 確認 DB eg3 -> device_data 內，有這個 Modbus 點位的資料 (data_uuid 欄位，要符合此點位的 UUID)
+2. 確認 DB eg3 -> device_data 內，上傳點位資料的 interval 為 1分鐘一筆(根據 IoE Suite 設定)
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm4，有在 Required Data Scopes 清單內,"Pre-condition 
+1. 已經創建 IoE Suite Service
+Test Steps:
+1.登入IOE suite/Developer
+2.選擇 Service
+3.查看 Required Data Scopes
+4. 選擇 Huawei_SmartLogger 裝置
+Expected Results:
+1. 確認 Huawei_SmartLogger 裝置 底下的 Scope 清單內，有此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger][檢查點位] 確認 alarm4，可以透過 ioeapi 取資料,"Precondition: 
+1.GW 已經關聯 Huawei_SmartLogger裝置 
+2. IoE Suite 的 Required Data Scopes 已經加入此點位 scope
+3. 使用者已經訂閱此 IoE Service
+Test step:
+1. 打 API 來取得此點位的資料 
+https://ioeapi-qa.nextdrive.io/v1/devices/deviceUuid/acquire
+Expected results:
+1. 預期 API request 回傳的 status code 為 200
+2. 預期 API response 可以成功取得此點位的資料
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger] Webhook User Status 可以收到此 device 的資料 (訂閱),"Precondition:
+1.GW 已經關聯 {model} 裝置
+2. IoE Suite 的 Required Control Scopes 已經加入此點位 scope
+3. 使用者 尚未 訂閱此 IoE Service
+Test Steps:
+1. 登入IOE suite/Developer
+2. 選擇 Service
+3. 在 User Status 欄位填寫 Webhook 的測試 link
+4. 使用者 訂閱此 IoE Service
+Expected results:
+1. 確認 Webhook Listener 有收到 Modbus 的裝置資訊
+2. 預期可以在 Elastic Log 看到 Webhook 的發送紀錄
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger] Webhook User Status 可以收到此 device 的資料 (解除訂閱),"Precondition:
+1.GW 已經關聯 {model} 裝置
+2. IoE Suite 的 Required Control Scopes 已經加入此點位 scope
+3. 使用者 尚未 訂閱此 IoE Service
+Test Steps:
+1. 登入IOE suite/Developer
+2. 選擇 Service
+3. 在 User Status 欄位填寫 Webhook 的測試 link
+4. 使用者 解除訂閱此 IoE Service
+Expected results:
+1. 確認 Webhook Listener 有收到 Modbus 的裝置資訊
+2. 預期可以在 Elastic Log 看到 Webhook 的發送紀錄
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger] Webhook User Status 可以收到此 device 的資料 (刪除帳號),"Precondition:
+1.GW 已經關聯 {model} 裝置
+2. IoE Suite 的 Required Control Scopes 已經加入此點位 scope
+3. 使用者 尚未 訂閱此 IoE Service
+Test Steps:
+1. 登入IOE suite/Developer
+2. 選擇 Service
+3. 在 User Status 欄位填寫 Webhook 的測試 link
+4. 刪除使用者帳號
+Expected results:
+1. 確認 Webhook Listener 有收到 Modbus 的裝置資訊
+2. 預期可以在 Elastic Log 看到 Webhook 的發送紀錄
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger] Webhook User Status 可以收到此 device 的資料 (Online),"Precondition:
+1.GW 已經關聯 {model} 裝置
+2. IoE Suite 的 Required Control Scopes 已經加入此點位 scope
+3. 使用者 尚未 訂閱此 IoE Service
+Test Steps:
+1. 登入IOE suite/Developer
+2. 選擇 Service
+3. 在 User Status 欄位填寫 Webhook 的測試 link
+4. 讓裝置上線
+Expected results:
+1. 確認 Webhook Listener 有收到 Modbus 的裝置資訊
+2. 預期可以在 Elastic Log 看到 Webhook 的發送紀錄
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger] Webhook User Status 可以收到此 device 的資料 (Offline),"Precondition:
+1.GW 已經關聯 {model} 裝置
+2. IoE Suite 的 Required Control Scopes 已經加入此點位 scope
+3. 使用者 尚未 訂閱此 IoE Service
+Test Steps:
+1. 登入IOE suite/Developer
+2. 選擇 Service
+3. 在 User Status 欄位填寫 Webhook 的測試 link
+4. 讓裝置離(斷)線
+Expected results:
+1. 確認 Webhook Listener 有收到 Modbus 的裝置資訊
+2. 預期可以在 Elastic Log 看到 Webhook 的發送紀錄
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger] Webhook User Status 可以收到此 device 的資料 (解除關聯),"Precondition:
+1.GW 已經關聯 {model} 裝置
+2. IoE Suite 的 Required Control Scopes 已經加入此點位 scope
+3. 使用者 尚未 訂閱此 IoE Service
+Test Steps:
+1. 登入IOE suite/Developer
+2. 選擇 Service
+3. 在 User Status 欄位填寫 Webhook 的測試 link
+4. 讓 GW 解除關聯 {model} 裝置
+Expected results:
+1. 確認 Webhook Listener 有收到 Modbus 的裝置資訊
+2. 預期可以在 Elastic Log 看到 Webhook 的發送紀錄
+"
+NewDevices,FAST,[Modbus][Huawei_SmartLogger] Webhook Required Data 可以收到此 device 的資料,"Precondition:
+1.GW 已經關聯 {model} 裝置
+2. IoE Suite 的 Required Control Scopes 已經加入此點位 scope
+3. 使用者 尚未 訂閱此 IoE Service
+Test Steps:
+1. 登入IOE suite/Developer
+2. 選擇 Service
+3. 在 User Status 欄位填寫 Webhook 的測試 link
+4. 等待 10 分鐘，讓 data scope 資料上傳到 IoEP DB
+Expected results:
+1. 確認 Webhook Listener 有收到 Modbus 的裝置資訊
+2. 預期可以在 Elastic Log 看到 Webhook 的發送紀錄
+"
